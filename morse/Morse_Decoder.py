@@ -99,6 +99,7 @@ class Morse_Decoder:
         # Not necessary to store whether they are high or low since the starting pulse is always high and high low pulses occur alternatively
 
     def start_pending_state(self, now:float) -> None:
+        #print("start pending")
         '''
         utility function to,
         starts the pending state -- when a state change happens
@@ -109,6 +110,7 @@ class Morse_Decoder:
         self.pending_start = now
 
     def reject_pending_state(self) -> None:
+        #print("reject pending")
         '''
         utility function to,
         reject the state change as noise
@@ -130,6 +132,7 @@ class Morse_Decoder:
 
 
     def accept_pending_state(self, new_state: STATES) -> None:
+        #print(new_state)
         '''
         new_state -> the new_state of the decoder to be set could be recording or idle (current has to pending)
         Utility function for accepting the change of state of the ldr as not noise and legitimate
@@ -199,7 +202,7 @@ class Morse_Decoder:
         '''
         Called when a morse code has been captured by get_signal
         '''
-
+        #print(timing_data)
         encoding = self.convert_timing_to_code(timing_data)
         #print(encoding)
         encoded_string = "".join(str(code.value) for code in encoding)
