@@ -1,6 +1,7 @@
 
 from typing import List, Literal
 from random import random
+from MorseCode_translator import convertToMorse, convertToWords
 
 from Morse_Decoder import Morse_Decoder,TIMINGS,MinTimes,SIGNAL_MAINTAIN_MIN_LIMIT,SIGNAL_TIMEOUT_LIMIT
 import itertools

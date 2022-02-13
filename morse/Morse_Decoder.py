@@ -1,5 +1,7 @@
 
+
 from typing import Callable, List
+from MorseCode_translator import convertToWords
 import enum
 
 
@@ -115,12 +117,13 @@ class Morse_Decoder:
     def block(self)->None:
         self.state = STATES.BLOCKED
 
-    def unblock_and_reset(self,current_time:float)->None:
-        self.state = STATES.IDLE                      
-        self.last_time = current_time                
-        self.pending_start = current_time           
-        self.state_before_pending = STATES.IDLE     
-        self.duratons.clear()    
+    def if_blocked_unblock_and_reset(self,current_time:float)->None:
+        if(self.state == STATES.BLOCKED):
+            self.state = STATES.IDLE                      
+            self.last_time = current_time                
+            self.pending_start = current_time           
+            self.state_before_pending = STATES.IDLE     
+            self.duratons.clear()    
 
 
     def accept_pending_state(self, new_state: STATES) -> None:
@@ -160,7 +163,10 @@ class Morse_Decoder:
             # end of message revert to IDLE and process the message
             elif(self.state == STATES.RECORDING and current_time - self.last_time > SIGNAL_TIMEOUT_LIMIT):
                 self.state = STATES.IDLE
-                self.duratons.append(current_time-self.last_time)
+                if(self.last_signal_state):#ending with a dash (that is too long but what ever ...) dash should be added
+                    self.duratons.append(current_time-self.last_time)
+                else:#ending with long low signal correct ending of a message the signal need not be added
+                    pass
                 self.process_code(self.duratons)
                 self.duratons.clear()
                 return True # no issue in returning since the
@@ -192,7 +198,14 @@ class Morse_Decoder:
         '''
 
         encoding = self.convert_timing_to_code(timing_data)
-        self.call_back(str(encoding))
+        encoded_string = "".join(code.value for code in encoding)
+        try:
+            message = convertToWords(encoded_string)
+        except KeyError:
+            message = ''
+        self.call_back(message)
+
+        
 
     def convert_timing_to_code(self, timing_data: List[float]) -> List[MORSE_ENCODING]:
         '''
