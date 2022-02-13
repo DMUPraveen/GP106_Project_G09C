@@ -1,7 +1,7 @@
 
 
 from typing import Callable, List
-from MorseCode_translator import convertToWords
+from .MorseCode_translator import convertToWords
 import enum
 
 
@@ -55,6 +55,9 @@ TIME_UNIT = 1                   # time a dot a takes (or a letter pause)
 SIGNAL_MAINTAIN_MIN_LIMIT = 0.1 # time a signal has to maintained for it to be considered a valid change of state
 SIGNAL_TIMEOUT_LIMIT = 10       # maximum time the signal can be kept at a some state without changing before the deocder decides the signal has ended
 MAX_WORD_COUNT = 100            # The maximum number of dots and dashes a message can have (not implemented as of yet)
+
+def convert_to_english(encoding:str)->str:
+    return convertToWords(encoding.replace('4','343'))
 
 
 class Morse_Decoder:
@@ -198,9 +201,10 @@ class Morse_Decoder:
         '''
 
         encoding = self.convert_timing_to_code(timing_data)
-        encoded_string = "".join(code.value for code in encoding)
+        #print(encoding)
+        encoded_string = "".join(str(code.value) for code in encoding)
         try:
-            message = convertToWords(encoded_string)
+            message = convert_to_english(encoded_string)
         except KeyError:
             message = ''
         self.call_back(message)
